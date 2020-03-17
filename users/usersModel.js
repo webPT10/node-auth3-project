@@ -1,8 +1,29 @@
 const db = require("../data/config")
 
 
-function find(){
-    
+function getAll(){
+    return db("users")
+        .select("id", "username", "department")
 }
 
-module.exports = {}
+function findBy(filter){
+    return db("users")
+    .where(filter)
+    .select("id", "username", "password", "department")
+    .first();
+}
+
+function add(user){
+    return db("users")
+        .insert(user, "id")
+        .then(ids => {
+            const [id] = ids
+            return findBy({ id })
+        })
+}
+
+module.exports = {
+    getAll,
+    findBy,
+    add
+}

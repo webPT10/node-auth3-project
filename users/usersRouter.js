@@ -15,13 +15,35 @@ router.post("/register", async (req, res) => {
 
 })
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res, next) => {
+    const authError = {
+        message: "Yo! Invalid Credentials"
+      };
 
+    try {
+        const { username, password } = req.body
+
+        const user = await Users.findBy({ username }).first()
+        if(!user){
+            return res.status(401).json({authError})
+        }
+
+        const passwordValid = await bcrypt.compare(password, user.password)
+        if (!passwordValid){
+            return res.status(401).json(authError)
+        }
+
+        res.json({
+            message: `Welcome, ${user.username}`
+        })
+    } catch(error){
+        next(error)
+    }
 })
 
 router.get("/users", restrict, async (req, res, next) => {
     try {
-        res.json(await Users.find())
+        res.json(await Users.getAll())
     } catch(error){
         next(error)
     }
