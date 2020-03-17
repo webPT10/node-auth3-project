@@ -199,3 +199,6 @@ https://www.npmjs.com/package/express-session
   session({
     secret: process.env.COOKIE_SECRET || "secret", 
     })
+
+## JSON WEB TOKEN
+- npm i jsonwebtoken
