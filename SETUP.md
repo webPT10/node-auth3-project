@@ -111,7 +111,7 @@ module.exports = {
 ## EXPRESS-SESSIONS
 https://www.npmjs.com/package/express-session
 
-> npm install express-session
+> npm i express-session
     >> this is just Middleware
 
 > server.js
@@ -142,7 +142,7 @@ https://www.npmjs.com/package/express-session
         return res.status(401).json(authError)
       }
 
-> 3 userRouter.sj 
+> 3 userRouter.js
     const authToken = Math.random();
     sessions[authToken] = user.id;
 
