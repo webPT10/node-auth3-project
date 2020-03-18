@@ -1,18 +1,27 @@
 const express = require("express")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
-const Users = require("./userModel")
-const { restrict } = require("../middleware/restrict")
-
-JWT
-// const jwt = require("jsonwebtoken")
+const Users = require("./usersModel")
+const restrict  = require("../middleware/restrict")
 
 const router = express.Router({
     mergeParams:true
 })
 
 router.post("/register", async (req, res) => {
-
+    const { username, password, department } = req.body
+    try {
+        const hash = bcrypt.hashSync(password, 14)
+        const newUser = await Users.add({
+            username: username,
+            password: hash,
+            department: department
+        })
+        res.status(200).json(newUser)
+    } catch {
+        res.status(501).json({ message: "Unable to add user." })
+    }
 })
 
 router.post("/login", async (req, res, next) => {
@@ -33,23 +42,33 @@ router.post("/login", async (req, res, next) => {
             return res.status(401).json(authError)
         }
 
+        const payload = {
+            userId: user.id, 
+            userRole: "normal", // normally comes from a database
+        }
+        // generate a new JWT
+        const token = jwt.sign(payload, process.env.JWT_SECRET )
+
+        // sends a Set-Cookie header with the value of the token
+        res.cookie("token", token)
+
         res.json({
-            message: `Welcome, ${user.username}`
+            message: `Welcome, ${user.username}`,
         })
     } catch(error){
         next(error)
     }
 })
 
-router.get("/users", restrict, async (req, res, next) => {
+router.get("/users", restrict(), async (req, res, next) => {
     try {
-        res.json(await Users.getAll())
+        res.json(await Users.getAll({ department }))
     } catch(error){
         next(error)
     }
 })
 
-router.get("/logout", restrict, async (req, res) => {
+router.get("/logout", restrict(), async (req, res) => {
     res.status(200).json({ message: `Hooray! Successful Logout.`})
 })
 

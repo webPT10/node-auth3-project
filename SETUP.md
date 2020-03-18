@@ -29,6 +29,14 @@ module.exports = {
        
 - NODEMON > npm install --save-dev nodemon
 - dotenv > npm i dotenv
+    > add to package.json 
+        > "server": "nodemon -r dotenv/config server.js",
+    
+    > create .env file
+    > add in > 
+        > JWT_SECRET="nsno"
+    > pass this into creating a new JWT > 
+        > const token = jwt.sign(payload, process.env.JWT_SECRET)
 
 ## FILE STRUCTURE
 - mkdir data && touch data/config.js
@@ -202,3 +210,13 @@ https://www.npmjs.com/package/express-session
 
 ## JSON WEB TOKEN
 - npm i jsonwebtoken
+- create payload > 
+    > const payload = {
+        userId: user.id, 
+        userRole: "normal", // normally comes from a database
+    }
+- create jwt > 
+    > const token = jwt.sign(payload,"nsno" ) // nsno is the secret key
+
+## INSTALL > cookie-parser
+- npm i cookie-parser

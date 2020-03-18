@@ -1,27 +1,29 @@
 const bcrypt = require("bcryptjs");
 const Users = require("../users/usersModel");
+const jwt = require("jsonwebtoken")
 
 function restrict() {
   const authError = {
     message: "Yo! Invalid Credentials"
   };
+
   return async (req, res, next) => {
     try {
-      const { username, password } = req.headers;
-      if (!username || !password) {
-        return res.status(401).json(authError);
+      const token = req.headers.authorization
+      if(!token){
+          return res.status(401).json(authError)
       }
+      // verify the token's signature
+      jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
+          if(error){
+              return res.status(401).json(authError)
+          }
 
-      const user = await Users.findBy({ username }).first();
-      if (!user) {
-        return res.status(401).json(authError);
-      }
+          req.token = decoded
+          console.log(decoded)
 
-      const passwordValid = await bcrypt.compare(password, user.password);
-      if (!passwordValid) {
-        return res.status(401).json(authError);
-      }
-      next();
+          next()
+      })
     } catch (error) {
       next(error);
     }
