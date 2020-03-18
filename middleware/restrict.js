@@ -9,9 +9,11 @@ function restrict() {
 
   return async (req, res, next) => {
     try {
-      const token = req.headers.authorization
+      const { token }  = req.cookies
+        console.log(req.cookies)
+
       if(!token){
-          return res.status(401).json(authError)
+          return res.status(401).json(authError) 
       }
       // verify the token's signature
       jwt.verify(token, process.env.JWT_SECRET, (error, decoded) => {
