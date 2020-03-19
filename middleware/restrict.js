@@ -9,6 +9,8 @@ function restrict() {
 
   return async (req, res, next) => {
     try {
+        // the JWT is being sent automatically from the cookie jar,
+		// so this uses the cookie-parser middleware to get the value.
       const { token } = req.cookies;
 
       if (!token) {

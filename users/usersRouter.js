@@ -31,6 +31,7 @@ router.post("/login", async (req, res, next) => {
     const authError = {
         message: "Invalid Credentials"
     }
+
   try {
     const { username, password } = req.body;
     const user = await Users.findBy({ username }).first()
@@ -51,6 +52,7 @@ router.post("/login", async (req, res, next) => {
       const token = jwt.sign(payload, process.env.JWT_SECRET);
     //   console.log(token);
 
+    // sends a Set-Cookie header with the value of the token
     res.cookie("token", token)
     res.json({
         message: `Welcome, ${user.username}`
